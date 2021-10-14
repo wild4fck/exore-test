@@ -17,8 +17,12 @@ class CreateUsersTable extends Migration {
             $table->string('email')->unique();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
+            $table->boolean('is_manager')->default(false);
+            $table->bigInteger('manager_id')->unsigned()->nullable();
             $table->rememberToken();
             $table->timestamps();
+
+            $table->foreign('manager_id')->references('id')->on('users');
         });
     }
 

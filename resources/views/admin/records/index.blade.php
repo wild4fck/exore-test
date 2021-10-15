@@ -32,7 +32,7 @@
                     <td class="text-center align-middle">
                         {{ $record->category->name }}
                     </td>
-                    <td>
+                    <td class="align-middle">
                         <picture class="w-100">
                             <source type="image/webp" srcset="{{$record->images()['318x318']->getUrl('webp')}}">
                             <source type="image/jpeg" srcset="{{$record->images()['318x318']->getUrl()}}">
@@ -47,12 +47,14 @@
                             @csrf
 
                             @can('update', $record)
-                                <a class="btn btn-primary" href="{{ route('admin.records.edit', $record) }}"><i
+                                <a class="btn btn-primary mb-1 mb-sm-0" style="max-width: 39px"
+                                   href="{{ route('admin.records.edit', $record) }}"><i
                                         class="fa fa-edit"></i></a>
                             @endcan
 
                             @can('delete', $record)
-                                <button type="submit" class="btn btn-danger"><i class="far fa-trash-alt"></i></button>
+                                <button type="submit" class="btn btn-danger mb-1 mb-sm-0"><i
+                                        class="far fa-trash-alt"></i></button>
                             @endcan
                         </form>
                     </td>

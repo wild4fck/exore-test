@@ -9,8 +9,11 @@
 
                     <div class="card-body">
                         <ul class="list-group">
-                            <li class="list-group-item"><a href="{{ route('admin.employees.index') }}">Employees</a>
+                            @manager
+                            <li class="list-group-item">
+                                <a href="{{ route('admin.employees.index') }}">Employees</a>
                             </li>
+                            @endmanager
                             <li class="list-group-item"><a href="{{ route('admin.records.index') }}">Records</a></li>
                         </ul>
                     </div>

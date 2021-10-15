@@ -2,7 +2,10 @@
 
 namespace App\Providers;
 
+use App\Models\Record;
+use App\Policies\RecordPolicy;
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
+use Illuminate\Support\Facades\Gate;
 
 class AuthServiceProvider extends ServiceProvider {
     /**
@@ -11,7 +14,8 @@ class AuthServiceProvider extends ServiceProvider {
      * @var array
      */
     protected $policies = [
-        // 'App\Models\Model' => 'App\Policies\ModelPolicy',
+        'App\Models\Model' => 'App\Policies\ModelPolicy',
+        Record::class => RecordPolicy::class
     ];
 
     /**
@@ -22,6 +26,6 @@ class AuthServiceProvider extends ServiceProvider {
     public function boot() {
         $this->registerPolicies();
 
-        //
+        Gate::define('view-by-author', [RecordPolicy::class, 'viewByAuthor']);
     }
 }

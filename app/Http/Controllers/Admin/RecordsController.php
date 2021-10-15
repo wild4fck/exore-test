@@ -12,11 +12,9 @@ use App\Models\Gallery;
 use App\Models\Record;
 use App\Models\User;
 use App\Services\RecordsService;
-use Exception;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
-use Illuminate\Http\Request;
 
 class RecordsController extends Controller {
 
@@ -44,7 +42,7 @@ class RecordsController extends Controller {
      */
     public function indexByCategory(Category $category) {
         return view('admin.records.index', [
-            'postfix' => $category->name,
+            'postfix' => 'of ' . $category->name,
             'records' => Record::with(['category', 'author'])
                 ->whereHas('category', function ($q) use ($category) {
                     $q->where('id', $category->id);
@@ -58,20 +56,23 @@ class RecordsController extends Controller {
     }
 
     /**&
-     * @param \App\Models\User $user
+     * @param \App\Models\User $author
      * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View
+     * @throws \Illuminate\Auth\Access\AuthorizationException
      * @noinspection PhpUndefinedFieldInspection
      */
-    public function indexByAuthor(User $user) {
-        if ($user->id === auth()->user()->id) {
+    public function indexByAuthor(User $author) {
+        $this->authorize('view-by-author', $author);
+
+        if ($author->id === auth()->user()->id) {
             return redirect(route('admin.records.index'));
         }
 
         return view('admin.records.index', [
-            'postfix' => $user->name,
+            'postfix' => 'by ' . $author->name,
             'records' => Record::with(['category', 'author'])
-                ->whereHas('author', function ($q) use ($user) {
-                    $q->where('id', $user->id);
+                ->whereHas('author', function ($q) use ($author) {
+                    $q->where('id', $author->id);
                 })->paginate(10)
         ]);
     }
@@ -116,8 +117,11 @@ class RecordsController extends Controller {
      *
      * @param Record $record
      * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View
+     * @throws \Illuminate\Auth\Access\AuthorizationException
      */
     public function show(Record $record) {
+        $this->authorize('view', $record);
+
         return view('admin.records.show', [
             'record' => $record
         ]);
@@ -130,6 +134,7 @@ class RecordsController extends Controller {
      * @return Application|\Illuminate\Contracts\View\Factory|View
      */
     public function edit(Record $record) {
+        $this->authorize('update', $record);
         return view('admin.records.edit', [
             'record' => $record,
             'categories' => Category::all()
@@ -139,12 +144,14 @@ class RecordsController extends Controller {
     /**
      * Update the specified resource in storage.
      *
-     * @param Request $request
+     * @param \App\Http\Requests\Admin\CreateRecordRequest $request
      * @param Record $record
      * @return RedirectResponse
-     * @throws Exception
+     * @throws \Exception
      */
-    public function update(Request $request, record $record): RedirectResponse {
+    public function update(CreateRecordRequest $request, record $record): RedirectResponse {
+        $this->authorize('update', $record);
+
         $lastImages = RecordsService::beforeUpdateRecord($request, $record);
 
         $record->update(array_merge($request->except(['alias', 'photos', 'files'])));
@@ -161,9 +168,11 @@ class RecordsController extends Controller {
      *
      * @param Record $record
      * @return RedirectResponse
-     * @throws Exception
+     * @throws \Illuminate\Auth\Access\AuthorizationException
      */
     public function destroy(Record $record): RedirectResponse {
+        $this->authorize('delete', $record);
+
         $record->delete();
         RecordsService::afterDeleteRecord($record);
 

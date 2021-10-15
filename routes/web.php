@@ -37,7 +37,7 @@ Route::prefix('admin')
         Route::resource('/records', RecordsController::class);
         Route::prefix('/records')->name('records.')->group(function () {
             Route::get('/by-category/{category}', [RecordsController::class, 'indexByCategory'])->name('byCategory');
-            Route::get('/by-author/{user}', [RecordsController::class, 'indexByAuthor'])->name('byAuthor');
+            Route::get('/by-author/{author}', [RecordsController::class, 'indexByAuthor'])->name('byAuthor');
         });
 
 

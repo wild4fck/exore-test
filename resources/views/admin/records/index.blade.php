@@ -5,11 +5,12 @@
     <div class="container">
 
         @include('admin.components.breadcrumb', [
-               'title' => $postfix ? 'List of records by ' . $postfix : 'List of records',
+               'title' => isset($postfix) ? 'Records list ' . $postfix : 'List of records',
                'parents' => [
                    route('admin.dashboard') => 'Admin',
+                   route('admin.records.index') => isset($postfix) ? 'Records' : null
                ],
-               'active' => 'Records',
+               'active' => isset($postfix) ? 'Records ' . $postfix : 'Records',
            ])
 
 
@@ -45,10 +46,14 @@
                             @method('DELETE')
                             @csrf
 
-                            <a class="btn btn-primary" href="{{ route('admin.records.edit', $record) }}"><i
-                                    class="fa fa-edit"></i></a>
+                            @can('update', $record)
+                                <a class="btn btn-primary" href="{{ route('admin.records.edit', $record) }}"><i
+                                        class="fa fa-edit"></i></a>
+                            @endcan
 
-                            <button type="submit" class="btn btn-danger"><i class="far fa-trash-alt"></i></button>
+                            @can('delete', $record)
+                                <button type="submit" class="btn btn-danger"><i class="far fa-trash-alt"></i></button>
+                            @endcan
                         </form>
                     </td>
                 </tr>

@@ -5,12 +5,12 @@
     <div class="container">
 
         @include('admin.components.breadcrumb', [
-            'title' => 'Редактирование пользователя',
+            'title' => 'Editing an employee',
             'parents' => [
-                route('admin.dashboard') => 'Главная',
-                route('admin.employees.index') => 'Пользователи',
+                route('admin.dashboard') => 'Admin',
+                route('admin.employees.index') => 'Employees',
             ],
-            'active' => 'Редактирование',
+            'active' => 'Editing',
         ])
 
         <hr/>

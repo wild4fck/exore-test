@@ -66,7 +66,6 @@ class EmployeesController extends Controller {
      * @return Response
      */
     public function show(User $user): Response {
-        //
     }
 
     /**
@@ -74,8 +73,10 @@ class EmployeesController extends Controller {
      *
      * @param User $user
      * @return Application|Factory|View
+     * @throws \Illuminate\Auth\Access\AuthorizationException
      */
     public function edit(User $user) {
+        $this->authorize('update', $user);
         return view('admin.employees.edit', [
             'user' => $user
         ]);
@@ -87,8 +88,10 @@ class EmployeesController extends Controller {
      * @param \App\Http\Requests\Admin\UpdateEmployeeRequest $request
      * @param User $user
      * @return RedirectResponse
+     * @throws \Illuminate\Auth\Access\AuthorizationException
      */
     public function update(UpdateEmployeeRequest $request, User $user): RedirectResponse {
+        $this->authorize('update', $user);
         $user->name = $request['name'];
         $user->email = $request['email'];
         $request['password'] == null ?: $user->password = bcrypt($request['password']);
@@ -106,6 +109,7 @@ class EmployeesController extends Controller {
      * @throws \Throwable
      */
     public function destroy(User $user): RedirectResponse {
+        $this->authorize('delete', $user);
         $user->delete();
         return redirect()->route('admin.employees.index');
     }

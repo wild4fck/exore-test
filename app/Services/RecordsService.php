@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Http\Requests\Admin\CreateRecordRequest;
 use App\Models\Record;
+use Illuminate\Http\Request;
 
 class RecordsService {
 
@@ -23,12 +24,12 @@ class RecordsService {
 
 
     /**
-     * @param \App\Http\Requests\Admin\CreateRecordRequest $request
+     * @param \Illuminate\Http\Request $request
      * @param \App\Models\Record $record
      * @return false|\Illuminate\Database\Eloquent\Collection
      * @throws \Exception
      */
-    public static function beforeUpdateRecord(CreateRecordRequest $request, Record $record) {
+    public static function beforeUpdateRecord(Request $request, Record $record) {
         if (!empty($request->input('photos'))) {
             $gallery = $record->gallery()->first();
             $lastImages = $record->imagesAll();

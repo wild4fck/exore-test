@@ -15,6 +15,7 @@ use App\Services\RecordsService;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
 
 class RecordsController extends Controller {
 
@@ -132,6 +133,7 @@ class RecordsController extends Controller {
      *
      * @param Record $record
      * @return Application|\Illuminate\Contracts\View\Factory|View
+     * @throws \Illuminate\Auth\Access\AuthorizationException
      */
     public function edit(Record $record) {
         $this->authorize('update', $record);
@@ -144,23 +146,28 @@ class RecordsController extends Controller {
     /**
      * Update the specified resource in storage.
      *
-     * @param \App\Http\Requests\Admin\CreateRecordRequest $request
+     * @param \Illuminate\Http\Request $request
      * @param Record $record
      * @return RedirectResponse
+     * @throws \Illuminate\Auth\Access\AuthorizationException
      * @throws \Exception
      */
-    public function update(CreateRecordRequest $request, record $record): RedirectResponse {
+    public function update(Request $request, Record $record): RedirectResponse {
         $this->authorize('update', $record);
 
         $lastImages = RecordsService::beforeUpdateRecord($request, $record);
 
-        $record->update(array_merge($request->except(['alias', 'photos', 'files'])));
+        $record->update([
+            'name' => $request['name']
+        ]);
+
+        $record->category()->associate(Category::find($request['category_id']))->push();
 
         if ($lastImages) {
             RecordsService::afterUpdateRecord($lastImages);
         }
 
-        return redirect()->route('admin.records.index');
+        return redirect()->route('admin.records.edit', $record);
     }
 
     /**

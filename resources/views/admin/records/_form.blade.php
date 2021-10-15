@@ -1,6 +1,6 @@
 <div class="shadow card">
     <div class="card-header">
-        <button type="submit" class="btn btn-primary float-right">Сохранить</button>
+        <button type="submit" class="btn btn-primary float-right">Save</button>
     </div>
 </div>
 

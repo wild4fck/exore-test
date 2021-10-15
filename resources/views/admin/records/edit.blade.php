@@ -18,7 +18,6 @@
         <form class="form-horizontal" action="{{ route('admin.records.update', $record) }}" method="post">
             @method('PUT')
             @csrf
-
             {{-- Form include --}}
             @include('admin.records._form')
         </form>
